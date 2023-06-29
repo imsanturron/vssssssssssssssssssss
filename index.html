@@ -94,7 +94,7 @@
         ///////////////////////////////////////////////////////////////////////////////////////////
 
         function getStudents() {
-            loadStudents.then(response => {
+            loadStudents().then(response => {
                 var tbody = document.querySelector("tbody")
                 tbody.innerHTML = ""
                 response.forEach(e => {
@@ -122,6 +122,10 @@
                     erase.innerHTML = "<button onclick='deleteStudent(" + student + ")'> Erase </button>"
                 })
             })
+        }
+
+        function viewStudent(student){
+         document.getElementById("view-student").style = "visibility : visible";
         }
 
         function saveStudent() {
@@ -166,7 +170,7 @@
         </table>
     </div>
 
-    <div class="view-student">
+    <div id="view-student" style="visibility: hidden;">
         <table>
             <tr>
                 <td>id</td>
