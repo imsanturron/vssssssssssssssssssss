@@ -7,7 +7,7 @@
     <title>TP Entregable</title>
 
     <script>
-        const url = 'https://8fd0-181-231-122-56.ngrok-free.app/student'
+        const url = 'https://d940-181-231-122-56.ngrok-free.app/student'
 
         window.onload = function () {
             getStudents()
@@ -42,6 +42,11 @@
                     'lastName': document.getElementById('lastName').value,
                     'firstName': document.getElementById('firstName').value,
                     'email': document.getElementById('email').value,
+                    'cohort': '0',
+                    'status': 'activo',
+                    'gender': 'masculino',
+                    'address': 'abc123',
+                    'phone': '000'
                 })
                 request.onload = function () {
                     if (request.status == 201) {
@@ -59,10 +64,10 @@
 
         function deleteStudent(id) {
             return new Promise(function (resolve, reject) {
-                var request = XMLHttpRequest()
+                var request = new XMLHttpRequest()
                 request.open("POST", url + "/" + id + "/delete")
                 request.setRequestHeader("Content-Type", "application/json")
-                request.onload() = function () {
+                request.onload = function () {
                     if (request.status == 200) {
                         resolve(request.response)
                     } else {
@@ -78,16 +83,21 @@
 
         function modifyStudent() {
             return new Promise(function (resolve, reject) {
-                var request = XMLHttpRequest()
+                var request = new XMLHttpRequest()
                 request.open("POST", url + "/" + document.getElementById("idx").value + "/update")
                 request.setRequestHeader('Content-Type', 'application/json')
                 var student = JSON.stringify({
                     "dni": document.getElementById("dnix").value,
-                    "lastName": document.getElementById("lastName").value,
-                    "firstName": document.getElementById("firstName").value,
-                    "email": document.getElementById("email").value
+                    "lastName": document.getElementById("lastNamex").value,
+                    "firstName": document.getElementById("firstNamex").value,
+                    "email": document.getElementById("emailx").value,
+                    'cohort': '0',
+                    'status': 'activo',
+                    'gender': 'masculino',
+                    'address': 'abc123',
+                    'phone': '000'
                 })
-                request.onload() = function () {
+                request.onload = function () {
                     if (request.status == 200) /////////////////////////////////
                         resolve(request.response)
                     else
@@ -96,7 +106,7 @@
                 request.onerror = function () {
                     reject(Error("Error: unexpected error"))
                 }
-                request.send()
+                request.send(student)
             })
         }
 
@@ -115,12 +125,16 @@
                     id.innerHTML = e.id
                     var dni = row.insertCell()
                     dni.innerHTML = e.dni
+                    dni.style = "text-align: center"
                     var lastName = row.insertCell()
                     lastName.innerHTML = e.lastName
+                    lastName.style = "text-align: center"
                     var firstName = row.insertCell()
                     firstName.innerHTML = e.firstName
+                    firstName.style = "text-align: center"
                     var email = row.insertCell()
                     email.innerHTML = e.email
+                    email.style = "text-align: center"
                     var student = JSON.stringify({
                         'id': e.id,
                         'dni': e.dni,
@@ -138,6 +152,11 @@
 
         function viewStudent(student) {
             document.getElementById("view-student").style = "visibility : visible";
+            document.getElementById("idx").value = student.id
+            document.getElementById("dnix").value = student.dni
+            document.getElementById("firstNamex").value = student.firstName
+            document.getElementById("lastNamex").value = student.lastName
+            document.getElementById("emailx").value = student.email
         }
 
         function saveStudent() {
@@ -153,6 +172,11 @@
             }
         }
 
+
+        function closeView() {
+            document.getElementById("view-student").style = "visibility : hidden";
+        }
+
         function removeStudent(id) {
             deleteStudent(id).then(() => {
                 getStudents()
@@ -162,16 +186,21 @@
         }
 
         function updateStudent() {
-            if (document.getElementById('dnix')[0].value.trim() !== '' &&
-                document.getElementById('lastNamex')[0].value.trim() !== '' &&
-                document.getElementById('firstNamex')[0].value.trim() !== '' &&
-                document.getElementById('emailx')[0].value.trim() !== '') {
+            /*if (document.getElementById('dnix').value.trim() !== '' &&  //////////////////////
+                document.getElementById('lastNamex').value.trim() !== '' &&
+                document.getElementById('firstNamex').value.trim() !== '' &&
+                document.getElementById('emailx').value.trim() !== '') {
                 modifyStudent().then(() => {
                     getStudents()
                 }).catch(reason => {
                     console.error(reason)
                 })
-            }
+            }*/
+            modifyStudent().then(() => {
+                getStudents()
+            }).catch(reason => {
+                console.error(reason)
+            })
         }
 
     </script>
@@ -230,6 +259,7 @@
             </tr>
             <tr>
                 <td> <button onclick="updateStudent()">update</button> </td>
+                <td> <button onclick="closeView()">close</button> </td>
             </tr>
         </table>
     </div>
