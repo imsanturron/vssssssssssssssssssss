@@ -42,11 +42,6 @@
                     'lastName': document.getElementById('lastName').value,
                     'firstName': document.getElementById('firstName').value,
                     'email': document.getElementById('email').value,
-                    'cohort': '0',
-                    'status': 'activo',
-                    'gender': 'masculino',
-                    'address': 'abc123',
-                    'phone': '000'
                 })
                 request.onload = function () {
                     if (request.status == 201) {
@@ -65,7 +60,7 @@
         function deleteStudent(id) {
             return new Promise(function (resolve, reject) {
                 var request = XMLHttpRequest()
-                request.open("POST", url + "/" + id + "delete")
+                request.open("POST", url + "/" + id + "/delete")
                 request.setRequestHeader("Content-Type", "application/json")
                 request.onload() = function () {
                     if (request.status == 200) {
@@ -84,7 +79,24 @@
         function modifyStudent() {
             return new Promise(function (resolve, reject) {
                 var request = XMLHttpRequest()
-                request.open("POST", url)
+                request.open("POST", url + "/" + document.getElementById("idx").value + "/update")
+                request.setRequestHeader('Content-Type', 'application/json')
+                var student = JSON.stringify({
+                    "dni": document.getElementById("dnix").value,
+                    "lastName": document.getElementById("lastName").value,
+                    "firstName": document.getElementById("firstName").value,
+                    "email": document.getElementById("email").value
+                })
+                request.onload() = function () {
+                    if (request.status == 200) /////////////////////////////////
+                        resolve(request.response)
+                    else
+                        reject(Error(request.statusText))
+                }
+                request.onerror = function () {
+                    reject(Error("Error: unexpected error"))
+                }
+                request.send()
             })
         }
 
@@ -119,13 +131,13 @@
                     var view = row.insertCell()
                     view.innerHTML = "<button onclick='viewStudent(" + student + ")'> View </button>"
                     var erase = row.insertCell()
-                    erase.innerHTML = "<button onclick='deleteStudent(" + student + ")'> Erase </button>"
+                    erase.innerHTML = "<button onclick='removeStudent(" + e.id + ")'> Erase </button>"
                 })
             })
         }
 
-        function viewStudent(student){
-         document.getElementById("view-student").style = "visibility : visible";
+        function viewStudent(student) {
+            document.getElementById("view-student").style = "visibility : visible";
         }
 
         function saveStudent() {
@@ -140,6 +152,28 @@
                 })
             }
         }
+
+        function removeStudent(id) {
+            deleteStudent(id).then(() => {
+                getStudents()
+            }).catch(reason => {
+                console.error(reason)
+            })
+        }
+
+        function updateStudent() {
+            if (document.getElementById('dnix')[0].value.trim() !== '' &&
+                document.getElementById('lastNamex')[0].value.trim() !== '' &&
+                document.getElementById('firstNamex')[0].value.trim() !== '' &&
+                document.getElementById('emailx')[0].value.trim() !== '') {
+                modifyStudent().then(() => {
+                    getStudents()
+                }).catch(reason => {
+                    console.error(reason)
+                })
+            }
+        }
+
     </script>
 </head>
 
@@ -153,13 +187,15 @@
                     <th> Dni</th>
                     <th> Last name</th>
                     <th> First name</th>
-                    <th>Email</th>
+                    <th> Email</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
             </tbody>
             <tfoot>
                 <tr>
+                    <td></td>
                     <td> <input type="text" id="dni"></td>
                     <td><input type="text" id="lastName"></td>
                     <td><input type="text" id="firstName"></td>
